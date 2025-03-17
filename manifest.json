@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "宜宾大学隐藏信息插件",
+  "version": "1.0.0",
+  "description": "显示宜宾大学项目评分系统中隐藏的信息",
+  "icons": {
+    "16": "icons/plugin-icon.png",
+    "48": "icons/plugin-icon.png",
+    "128": "icons/plugin-icon.png"
+  },
+  "permissions": [
+    "webRequest",
+    "scripting",
+    "tabs",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://scjx2.yibinu.edu.cn/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://scjx2.yibinu.edu.cn/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/plugin-icon.png",
+      "48": "icons/plugin-icon.png",
+      "128": "icons/plugin-icon.png"
+    }
+  }
+} 
