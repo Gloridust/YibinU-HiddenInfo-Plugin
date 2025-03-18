@@ -1,167 +1,147 @@
-document.addEventListener('DOMContentLoaded', function() {
-  // 检查插件状态和数据
-  chrome.storage.local.get(['teacherData', 'dataTimestamp', 'latestProjectRequest'], function(result) {
-    const statusElement = document.getElementById('status');
-    const featuresDiv = document.querySelector('.features');
-    
-    if (result.teacherData && result.teacherData.length > 0) {
-      // 显示数据状态
-      statusElement.className = 'status status-active';
-      statusElement.textContent = '已获取到教师评分数据';
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', () => {
+  // 获取页面元素
+  const projectList = document.getElementById('project-list');
+  const openDevToolsBtn = document.getElementById('openDevToolsBtn');
+  const clearDataBtn = document.getElementById('clearDataBtn');
+  const testPageBtn = document.getElementById('testPageBtn');
+  
+  // 加载捕获的项目数据
+  function loadProjectData() {
+    chrome.runtime.sendMessage({ action: "getProjectData" }, (response) => {
+      const data = response.data || {};
       
-      // 显示收集到的教师数据数量
-      const countElement = document.createElement('div');
-      countElement.className = 'feature-item';
-      countElement.innerHTML = `<strong>已收集数据：</strong> 共${result.teacherData.length}位教师的评分信息`;
-      featuresDiv.appendChild(countElement);
-      
-      // 显示数据时间
-      if (result.dataTimestamp) {
-        const timeElement = document.createElement('div');
-        timeElement.className = 'feature-item';
-        const date = new Date(result.dataTimestamp);
-        timeElement.innerHTML = `<strong>数据获取时间：</strong> ${date.toLocaleString()}`;
-        featuresDiv.appendChild(timeElement);
+      if (Object.keys(data).length === 0) {
+        projectList.innerHTML = '<div class="no-data">暂无捕获的项目数据</div>';
+        return;
       }
       
-      // 添加刷新按钮
-      const refreshBtn = document.createElement('button');
-      refreshBtn.textContent = '刷新数据';
-      refreshBtn.style.margin = '15px auto';
-      refreshBtn.style.display = 'block';
-      refreshBtn.style.padding = '5px 15px';
-      refreshBtn.style.backgroundColor = '#409eff';
-      refreshBtn.style.color = 'white';
-      refreshBtn.style.border = 'none';
-      refreshBtn.style.borderRadius = '4px';
-      refreshBtn.style.cursor = 'pointer';
+      let html = '';
+      // 获取最近的5个项目
+      const recentProjects = Object.entries(data)
+        .sort((a, b) => new Date(b[1].timestamp) - new Date(a[1].timestamp))
+        .slice(0, 5);
       
-      refreshBtn.addEventListener('click', function() {
-        // 清除现有数据
-        chrome.storage.local.remove(['teacherData', 'dataTimestamp'], function() {
-          // 通知激活的标签页重新获取数据
-          chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            if (tabs[0]) {
-              chrome.tabs.sendMessage(tabs[0].id, {action: "checkForTeachers"});
-              
-              // 更新状态
-              statusElement.textContent = '正在刷新数据...';
-              
-              // 2秒后刷新popup
-              setTimeout(function() {
-                window.location.reload();
-              }, 2000);
-            }
-          });
-        });
-      });
-      
-      featuresDiv.appendChild(refreshBtn);
-      
-      // 添加教师数据摘要
-      const dataPreview = document.createElement('div');
-      dataPreview.className = 'feature-item';
-      dataPreview.innerHTML = `<strong>教师评分摘要：</strong>`;
-      
-      const previewList = document.createElement('ul');
-      previewList.style.margin = '5px 0';
-      previewList.style.paddingLeft = '20px';
-      
-      // 最多显示3位教师的信息
-      const previewCount = Math.min(result.teacherData.length, 3);
-      for (let i = 0; i < previewCount; i++) {
-        const teacher = result.teacherData[i];
-        const item = document.createElement('li');
-        item.textContent = `${teacher.tea_name}: ${teacher.score}分`;
-        previewList.appendChild(item);
-      }
-      
-      if (result.teacherData.length > 3) {
-        const moreItem = document.createElement('li');
-        moreItem.textContent = `...等${result.teacherData.length - 3}位教师`;
-        previewList.appendChild(moreItem);
-      }
-      
-      dataPreview.appendChild(previewList);
-      featuresDiv.appendChild(dataPreview);
-      
-    } else {
-      // 未获取到数据
-      statusElement.className = 'status status-inactive';
-      statusElement.textContent = '尚未获取到教师评分数据';
-      
-      // 如果有请求但没数据
-      if (result.latestProjectRequest) {
-        const requestInfo = document.createElement('div');
-        requestInfo.className = 'feature-item';
-        requestInfo.innerHTML = `<strong>检测到请求：</strong> 已捕获stuProjectShow请求，但未获取到评分数据`;
-        featuresDiv.appendChild(requestInfo);
+      recentProjects.forEach(([projectId, project]) => {
+        const captureTime = new Date(project.timestamp).toLocaleString('zh-CN');
+        const teacherCount = project.scores.length;
+        const projectName = project.projectInfo?.name || '未知项目';
         
-        // 添加指引
-        const guideElement = document.createElement('div');
-        guideElement.className = 'feature-item';
-        guideElement.style.color = '#e6a23c';
-        guideElement.innerHTML = `
-          <strong>操作指引：</strong>
-          <ol style="margin: 5px 0; padding-left: 20px;">
-            <li>请确保您已登录宜宾学院系统</li>
-            <li>访问项目评审页面</li>
-            <li>点击"查看"按钮打开项目详情</li>
-            <li>稍等片刻，插件将自动捕获数据</li>
-          </ol>
+        html += `
+          <div class="project-item" data-id="${projectId}">
+            <div class="project-title">${projectName}</div>
+            <div class="project-meta">
+              ID: ${projectId.substring(0, 8)}...
+              <span class="badge">${teacherCount} 位老师</span>
+            </div>
+            <div class="project-meta">
+              捕获时间: ${captureTime}
+            </div>
+          </div>
         `;
-        featuresDiv.appendChild(guideElement);
-      } else {
-        // 完全没有请求和数据
-        const guideElement = document.createElement('div');
-        guideElement.className = 'feature-item';
-        guideElement.style.color = '#f56c6c';
-        guideElement.innerHTML = `
-          <strong>未检测到请求：</strong>
-          <ol style="margin: 5px 0; padding-left: 20px;">
-            <li>请访问宜宾学院项目评审系统</li>
-            <li>点击项目"查看"按钮</li>
-            <li>插件将自动捕获并显示教师评分信息</li>
-          </ol>
-        `;
-        featuresDiv.appendChild(guideElement);
-      }
-      
-      // 添加手动触发按钮
-      const triggerBtn = document.createElement('button');
-      triggerBtn.textContent = '手动触发数据获取';
-      triggerBtn.style.margin = '15px auto';
-      triggerBtn.style.display = 'block';
-      triggerBtn.style.padding = '5px 15px';
-      triggerBtn.style.backgroundColor = '#67c23a';
-      triggerBtn.style.color = 'white';
-      triggerBtn.style.border = 'none';
-      triggerBtn.style.borderRadius = '4px';
-      triggerBtn.style.cursor = 'pointer';
-      
-      triggerBtn.addEventListener('click', function() {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-          if (tabs[0]) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-              action: "checkForTeachers", 
-              forceRefresh: true
-            });
-            
-            // 更新状态
-            statusElement.textContent = '正在尝试获取数据...';
-            
-            // 3秒后刷新popup
-            setTimeout(function() {
-              window.location.reload();
-            }, 3000);
-          }
-        });
       });
       
-      featuresDiv.appendChild(triggerBtn);
+      projectList.innerHTML = html;
+      
+      // 添加项目点击事件
+      document.querySelectorAll('.project-item').forEach(item => {
+        item.addEventListener('click', () => {
+          // 打开DevTools并切换到我们的面板
+          chrome.tabs.create({ url: 'devtools/panel.html' });
+        });
+      });
+    });
+  }
+  
+  // 清除所有数据
+  function clearAllData() {
+    if (confirm('确定要清除所有捕获的项目数据吗？此操作不可撤销。')) {
+      chrome.runtime.sendMessage({ action: "clearCapturedData" }, (response) => {
+        if (response.success) {
+          loadProjectData();
+          showToast('所有数据已清除');
+        }
+      });
+    }
+  }
+  
+  // 显示Toast提示
+  function showToast(message) {
+    const statusSection = document.getElementById('status-section');
+    statusSection.innerHTML = `<div class="status">${message}</div>`;
+    
+    // 3秒后恢复原状态
+    setTimeout(() => {
+      statusSection.innerHTML = '<div class="status">插件已激活，正在监听网络请求</div>';
+    }, 3000);
+  }
+  
+  // 打开DevTools面板页面
+  function openDevToolsPanel() {
+    chrome.tabs.create({ url: 'devtools/panel.html' });
+  }
+  
+  // 打开测试页面
+  function openTestPage() {
+    chrome.tabs.create({ url: 'test.html' });
+  }
+  
+  // 处理用户提供的JSON数据
+  function processJsonData(jsonString) {
+    try {
+      chrome.runtime.sendMessage({
+        action: "testData",
+        data: jsonString
+      }, (response) => {
+        if (response && response.success) {
+          showToast('数据处理成功，已添加到项目列表');
+          // 刷新显示
+          loadProjectData();
+        } else {
+          showToast('数据处理失败: ' + (response?.error || '未找到有效的评分数据'));
+        }
+      });
+    } catch (error) {
+      showToast('处理数据出错: ' + error.message);
+    }
+  }
+  
+  // 事件监听
+  openDevToolsBtn.addEventListener('click', openDevToolsPanel);
+  clearDataBtn.addEventListener('click', clearAllData);
+  testPageBtn.addEventListener('click', openTestPage);
+  
+  // 监听来自background的更新消息
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "newDataCaptured") {
+      // 更新数据
+      loadProjectData();
+      showToast(`新项目数据已捕获: ${message.projectId.substring(0, 8)}...`);
+    }
+    
+    // 处理直接数据处理请求
+    if (message.action === "processJsonData" && message.data) {
+      processJsonData(message.data);
+      sendResponse({ received: true });
+      return true;
     }
   });
   
-  // 添加版本信息
-  document.querySelector('.footer').innerHTML += '<br>更新时间: ' + new Date().toLocaleDateString();
+  // 初始加载数据
+  loadProjectData();
+  
+  // 添加右键菜单支持 - 仅在开发者模式下显示，为了调试方便
+  if (chrome.contextMenus) {
+    chrome.contextMenus.create({
+      id: "processJsonData",
+      title: "处理宜宾学院项目数据",
+      contexts: ["selection"]
+    });
+    
+    chrome.contextMenus.onClicked.addListener((info, tab) => {
+      if (info.menuItemId === "processJsonData" && info.selectionText) {
+        processJsonData(info.selectionText);
+      }
+    });
+  }
 }); 

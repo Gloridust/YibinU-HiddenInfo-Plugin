@@ -1,21 +1,19 @@
 {
   "manifest_version": 3,
-  "name": "宜宾学院隐藏信息插件",
-  "version": "1.0.0",
-  "description": "显示浏览器中未显示，但在JSON响应中包含的项目信息",
+  "name": "YibinU-HiddenInfo-Plugin",
+  "version": "1.0",
+  "description": "显示浏览器中未显示但在JSON中包含的信息，如项目打分老师信息",
   "permissions": [
-    "webRequest",
     "storage",
-    "scripting",
-    "tabs"
+    "tabs",
+    "webRequest",
+    "contextMenus"
   ],
   "host_permissions": [
-    "*://*.yibinu.edu.cn/*",
     "<all_urls>"
   ],
   "background": {
-    "service_worker": "background.js",
-    "type": "module"
+    "service_worker": "background.js"
   },
   "action": {
     "default_popup": "popup/popup.html",
@@ -32,24 +30,15 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.yibinu.edu.cn/*", "<all_urls>"],
+      "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
   ],
+  "devtools_page": "devtools/devtools.html",
   "web_accessible_resources": [
     {
-      "resources": ["styles.css"],
-      "matches": ["*://*.yibinu.edu.cn/*", "<all_urls>"]
+      "resources": ["test.html"],
+      "matches": ["<all_urls>"]
     }
-  ],
-  "declarative_net_request": {
-    "rule_resources": [{
-      "id": "ruleset_1",
-      "enabled": true,
-      "path": "rules.json"
-    }]
-  },
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
-  }
+  ]
 } 

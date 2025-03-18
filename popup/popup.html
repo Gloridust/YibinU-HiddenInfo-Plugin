@@ -5,72 +5,126 @@
   <title>宜宾学院隐藏信息插件</title>
   <style>
     body {
-      width: 300px;
-      padding: 15px;
-      font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
-    }
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 15px;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      width: 360px;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
       color: #333;
     }
-    .status {
-      margin: 10px 0;
-      padding: 8px;
-      border-radius: 4px;
-      width: 100%;
+    .container {
+      padding: 16px;
+    }
+    h1 {
+      color: #1a73e8;
+      font-size: 18px;
+      margin-top: 0;
+      margin-bottom: 16px;
       text-align: center;
     }
-    .status-active {
-      background-color: #dff0d8;
-      color: #3c763d;
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      margin-bottom: 16px;
     }
-    .status-inactive {
-      background-color: #f2dede;
-      color: #a94442;
+    .project-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background-color 0.2s;
     }
-    .features {
-      margin-top: 15px;
-      width: 100%;
+    .project-item:hover {
+      background-color: #f1f8ff;
     }
-    .feature-item {
-      margin: 8px 0;
-      padding: 8px;
-      background-color: #f5f5f5;
-      border-radius: 4px;
+    .project-item:last-child {
+      border-bottom: none;
     }
-    .footer {
-      margin-top: 15px;
+    .project-title {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .project-meta {
       font-size: 12px;
-      color: #777;
+      color: #666;
+    }
+    .badge {
+      display: inline-block;
+      background-color: #1a73e8;
+      color: white;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 12px;
+      margin-left: 6px;
+    }
+    .button {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .button:hover {
+      background-color: #0d62c9;
+    }
+    .button.secondary {
+      background-color: #5f6368;
+      margin-top: 8px;
+    }
+    .button.secondary:hover {
+      background-color: #494c50;
+    }
+    .button.tertiary {
+      background-color: #34a853;
+      margin-top: 8px;
+    }
+    .button.tertiary:hover {
+      background-color: #2d9346;
+    }
+    .no-data {
+      text-align: center;
+      padding: 20px 0;
+      color: #666;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-direction: column;
+    }
+    .status {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #1e8e3e;
       text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <h2>宜宾学院隐藏信息插件</h2>
-    </div>
+    <h1>宜宾学院隐藏信息插件</h1>
     
-    <div id="status" class="status status-active">
-      插件已激活
-    </div>
-    
-    <div class="features">
-      <div class="feature-item">
-        <strong>功能1：</strong> 显示项目评审老师信息（姓名、分数、评语）
+    <div class="card">
+      <div id="status-section">
+        <div class="status">插件已激活，正在监听网络请求</div>
       </div>
-      <!-- 未来可添加更多功能 -->
-    </div>
-    
-    <div class="footer">
-      版本: 1.0.0 | 作者: YibinU-HiddenInfo 开发团队
+      
+      <div id="project-section">
+        <h2 style="font-size: 16px; margin-top: 12px;">最近捕获的项目</h2>
+        <div id="project-list">
+          <div class="no-data">暂无捕获的项目数据</div>
+        </div>
+      </div>
+      
+      <div class="actions">
+        <button id="openDevToolsBtn" class="button">打开详细信息面板</button>
+        <button id="testPageBtn" class="button tertiary">打开测试页面</button>
+        <button id="clearDataBtn" class="button secondary">清除所有数据</button>
+      </div>
     </div>
   </div>
   

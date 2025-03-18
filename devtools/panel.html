@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>宜宾学院隐藏信息面板</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #1a73e8;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: #202124;
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+    }
+    h2 span {
+      color: #5f6368;
+      font-size: 14px;
+      margin-left: 8px;
+      font-weight: normal;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f8f8f8;
+      font-weight: bold;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .button {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 10px;
+    }
+    .button:hover {
+      background-color: #0d62c9;
+    }
+    .button.secondary {
+      background-color: #5f6368;
+    }
+    .button.secondary:hover {
+      background-color: #494c50;
+    }
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    .info-row {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .info-label {
+      width: 120px;
+      font-weight: bold;
+      color: #5f6368;
+    }
+    .info-value {
+      flex: 1;
+    }
+    .actions {
+      display: flex;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>宜宾学院项目打分老师信息</h1>
+    
+    <div class="card">
+      <h2>捕获到的项目</h2>
+      <div id="project-list">
+        <p class="no-data">暂无捕获到的项目数据，请浏览相关页面触发捕获。</p>
+      </div>
+      <div class="actions">
+        <button id="refreshBtn" class="button">刷新数据</button>
+        <button id="clearBtn" class="button secondary">清除所有数据</button>
+      </div>
+    </div>
+    
+    <div id="project-details" class="card" style="display: none;">
+      <h2>项目详情 <span id="project-id"></span></h2>
+      <div id="teacher-scores">
+        <table>
+          <thead>
+            <tr>
+              <th>老师姓名</th>
+              <th>工号</th>
+              <th>打分</th>
+              <th>打分时间</th>
+              <th>意见</th>
+            </tr>
+          </thead>
+          <tbody id="scores-table-body">
+          </tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button id="exportXlsxBtn" class="button">导出为Excel表格</button>
+        <button id="backBtn" class="button secondary">返回项目列表</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="../lib/xlsx.full.min.js"></script>
+  <script src="panel.js"></script>
+</body>
+</html> 
