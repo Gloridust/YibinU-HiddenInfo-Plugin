@@ -1,37 +1,55 @@
 {
   "manifest_version": 3,
-  "name": "宜宾大学隐藏信息插件",
+  "name": "宜宾学院隐藏信息插件",
   "version": "1.0.0",
-  "description": "显示宜宾大学项目评分系统中隐藏的信息",
-  "icons": {
-    "16": "icons/plugin-icon.png",
-    "48": "icons/plugin-icon.png",
-    "128": "icons/plugin-icon.png"
-  },
+  "description": "显示浏览器中未显示，但在JSON响应中包含的项目信息",
   "permissions": [
     "webRequest",
+    "storage",
     "scripting",
-    "tabs",
-    "storage"
+    "tabs"
   ],
   "host_permissions": [
-    "https://scjx2.yibinu.edu.cn/*"
+    "*://*.yibinu.edu.cn/*",
+    "<all_urls>"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "content_scripts": [
     {
-      "matches": ["https://scjx2.yibinu.edu.cn/*"],
+      "matches": ["*://*.yibinu.edu.cn/*", "<all_urls>"],
       "js": ["content.js"]
     }
   ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icons/plugin-icon.png",
-      "48": "icons/plugin-icon.png",
-      "128": "icons/plugin-icon.png"
+  "web_accessible_resources": [
+    {
+      "resources": ["styles.css"],
+      "matches": ["*://*.yibinu.edu.cn/*", "<all_urls>"]
     }
+  ],
+  "declarative_net_request": {
+    "rule_resources": [{
+      "id": "ruleset_1",
+      "enabled": true,
+      "path": "rules.json"
+    }]
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   }
 } 

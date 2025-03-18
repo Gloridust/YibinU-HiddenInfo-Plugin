@@ -1,0 +1,35 @@
+/* 教师信息表格样式 */
+#teacher-info-table {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+#teacher-info-table th, 
+#teacher-info-table td {
+  text-align: left;
+  padding: 8px;
+  border: 1px solid #ebeef5;
+}
+
+#teacher-info-table th {
+  background-color: #f5f7fa;
+  color: #606266;
+  font-weight: bold;
+}
+
+#teacher-info-table tr:hover {
+  background-color: #f5f7fa;
+}
+
+/* 表格标题样式 */
+.teacher-info-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 20px 0 10px 0;
+  color: #409eff;
+  border-left: 3px solid #409eff;
+  padding-left: 10px;
+} 
