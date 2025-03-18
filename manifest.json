@@ -6,8 +6,7 @@
   "permissions": [
     "storage",
     "tabs",
-    "webRequest",
-    "contextMenus"
+    "webRequest"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -34,11 +33,5 @@
       "js": ["content.js"]
     }
   ],
-  "devtools_page": "devtools/devtools.html",
-  "web_accessible_resources": [
-    {
-      "resources": ["test.html"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  "devtools_page": "devtools/devtools.html"
 } 

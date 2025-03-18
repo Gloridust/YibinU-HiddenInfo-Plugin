@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const projectList = document.getElementById('project-list');
   const openDevToolsBtn = document.getElementById('openDevToolsBtn');
   const clearDataBtn = document.getElementById('clearDataBtn');
-  const testPageBtn = document.getElementById('testPageBtn');
   
   // 加载捕获的项目数据
   function loadProjectData() {
@@ -76,72 +75,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3000);
   }
   
-  // 打开DevTools面板页面
+  // 打开详细信息面板页面
   function openDevToolsPanel() {
     chrome.tabs.create({ url: 'devtools/panel.html' });
-  }
-  
-  // 打开测试页面
-  function openTestPage() {
-    chrome.tabs.create({ url: 'test.html' });
-  }
-  
-  // 处理用户提供的JSON数据
-  function processJsonData(jsonString) {
-    try {
-      chrome.runtime.sendMessage({
-        action: "testData",
-        data: jsonString
-      }, (response) => {
-        if (response && response.success) {
-          showToast('数据处理成功，已添加到项目列表');
-          // 刷新显示
-          loadProjectData();
-        } else {
-          showToast('数据处理失败: ' + (response?.error || '未找到有效的评分数据'));
-        }
-      });
-    } catch (error) {
-      showToast('处理数据出错: ' + error.message);
-    }
   }
   
   // 事件监听
   openDevToolsBtn.addEventListener('click', openDevToolsPanel);
   clearDataBtn.addEventListener('click', clearAllData);
-  testPageBtn.addEventListener('click', openTestPage);
   
   // 监听来自background的更新消息
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "newDataCaptured") {
       // 更新数据
       loadProjectData();
-      showToast(`新项目数据已捕获: ${message.projectId.substring(0, 8)}...`);
-    }
-    
-    // 处理直接数据处理请求
-    if (message.action === "processJsonData" && message.data) {
-      processJsonData(message.data);
-      sendResponse({ received: true });
-      return true;
+      const projectName = message.projectName || '未知项目';
+      showToast(`新项目已捕获: ${projectName}`);
     }
   });
   
   // 初始加载数据
   loadProjectData();
-  
-  // 添加右键菜单支持 - 仅在开发者模式下显示，为了调试方便
-  if (chrome.contextMenus) {
-    chrome.contextMenus.create({
-      id: "processJsonData",
-      title: "处理宜宾学院项目数据",
-      contexts: ["selection"]
-    });
-    
-    chrome.contextMenus.onClicked.addListener((info, tab) => {
-      if (info.menuItemId === "processJsonData" && info.selectionText) {
-        processJsonData(info.selectionText);
-      }
-    });
-  }
 }); 

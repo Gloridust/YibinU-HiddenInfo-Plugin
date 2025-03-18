@@ -45,10 +45,16 @@ function processResponseData(responseText, url) {
       const projectInfo = {
         name: responseData.result.name || '未知项目',
         summary: responseData.result.summary || '',
-        department: responseData.result.dep_name || '未知学院'
+        department: responseData.result.dep_name || '未知学院',
+        category: responseData.result.category || '',
+        form: responseData.result.form || '',
+        pro_cycle: responseData.result.pro_cycle || '',
+        apply_date: responseData.result.apply_date || '',
+        cost: responseData.result.cost || '',
+        students: responseData.result.stus || []
       };
       
-      console.log('找到项目评分数据，项目ID:', projectId, '，评分人数:', scoreData.length);
+      console.log('找到项目评分数据，项目ID:', projectId, '，项目名称:', projectInfo.name, '，评分人数:', scoreData.length);
       
       // 存储捕获的数据
       capturedData[projectId] = {
@@ -65,6 +71,7 @@ function processResponseData(responseText, url) {
         chrome.runtime.sendMessage({
           action: "newDataCaptured",
           projectId: projectId,
+          projectName: projectInfo.name,
           count: scoreData.length
         });
       });

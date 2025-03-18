@@ -2,12 +2,10 @@
 const originalFetch = window.fetch;
 const originalXHR = window.XMLHttpRequest.prototype.open;
 const originalSend = window.XMLHttpRequest.prototype.send;
-let pendingRequests = {};
 
 // 拦截 Fetch API
 window.fetch = async function(...args) {
   const url = args[0].url || args[0];
-  const method = args[1]?.method || 'GET';
   
   // 继续原始fetch请求
   const response = await originalFetch.apply(this, args);
@@ -72,64 +70,11 @@ window.XMLHttpRequest.prototype.send = function(body) {
   return originalSend.apply(this, arguments);
 };
 
-// 页面加载完成后注入测试数据处理函数
-window.addEventListener('load', () => {
-  console.log('页面加载完成，准备监听网络请求...');
-  
-  // 注入一个用于手动测试的函数
-  window.testCaptureData = function(jsonData) {
-    try {
-      if (typeof jsonData === 'string') {
-        // 如果是字符串，尝试解析为JSON
-        const data = JSON.parse(jsonData);
-        processDataAndSend(data);
-      } else {
-        // 如果已经是对象，直接处理
-        processDataAndSend(jsonData);
-      }
-    } catch (error) {
-      console.error('测试数据处理出错:', error);
-    }
-  };
-  
-  // 处理并发送数据的辅助函数
-  function processDataAndSend(data) {
-    chrome.runtime.sendMessage({
-      action: "responseData",
-      url: "manual_test",
-      data: JSON.stringify(data)
-    }, response => {
-      console.log('测试数据已发送到后台，响应:', response);
-    });
-  }
-});
-
 // 监听来自background.js的消息
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "captureResponse" && message.url) {
     console.log('收到捕获请求:', message.url);
     sendResponse({received: true});
-    return true;
-  }
-  
-  // 如果收到了处理测试数据的请求
-  if (message.action === "processTestData" && message.data) {
-    try {
-      const testData = JSON.parse(message.data);
-      console.log('收到测试数据请求，数据长度:', message.data.length);
-      
-      // 将数据发送到background.js
-      chrome.runtime.sendMessage({
-        action: "responseData",
-        url: "test_data_request",
-        data: message.data
-      });
-      
-      sendResponse({success: true});
-    } catch (error) {
-      console.error('处理测试数据出错:', error);
-      sendResponse({success: false, error: error.message});
-    }
     return true;
   }
 }); 
