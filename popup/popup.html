@@ -95,11 +95,66 @@
       color: #1e8e3e;
       text-align: center;
     }
+    .guide {
+      background-color: #e6f4ea;
+      border-left: 4px solid #34a853;
+      padding: 12px;
+      margin-bottom: 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .warning {
+      background-color: #fef7e0;
+      border-left: 4px solid #fbbc04;
+      padding: 12px;
+      margin-bottom: 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .guide-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #1e8e3e;
+    }
+    .warning-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #ea8600;
+    }
+    .guide ol, .warning ol {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+    .guide li, .warning li {
+      margin-bottom: 4px;
+    }
+    .kbd {
+      display: inline-block;
+      padding: 2px 5px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12px;
+      background-color: #f8f9fa;
+      border: 1px solid #d5d9d9;
+      border-radius: 3px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>宜宾学院隐藏信息插件</h1>
+    
+    <div class="warning">
+      <div class="warning-title">⚠️ 重要提示</div>
+      <p>请先打开浏览器开发者工具（Network面板）才能捕获数据！</p>
+      <ol>
+        <li>按 <span class="kbd">F12</span> 或 <span class="kbd">Ctrl+Shift+I</span>（Mac: <span class="kbd">⌘+⌥+I</span>）</li>
+        <li>切换到 <b>Network</b> 标签页</li>
+        <li>保持开发者工具打开，然后浏览项目页面</li>
+      </ol>
+    </div>
     
     <div class="card">
       <div id="status-section">
@@ -111,6 +166,16 @@
         <div id="project-list">
           <div class="no-data">暂无捕获的项目数据</div>
         </div>
+      </div>
+      
+      <div class="guide">
+        <div class="guide-title">📝 使用指南</div>
+        <ol>
+          <li>打开浏览器开发者工具（F12）→ Network面板</li>
+          <li>访问宜宾学院项目评分页面并点击"查看"按钮</li>
+          <li>插件会自动捕获评分信息并显示在此处</li>
+          <li>点击项目可查看详细信息和导出数据</li>
+        </ol>
       </div>
       
       <div class="actions">

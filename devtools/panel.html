@@ -117,11 +117,53 @@
     .student-table th, .student-table td {
       padding: 8px 12px;
     }
+    .warning {
+      background-color: #fef7e0;
+      border-left: 4px solid #fbbc04;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .warning-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #ea8600;
+    }
+    .steps {
+      margin-left: 20px;
+      padding-left: 0;
+    }
+    .steps li {
+      margin-bottom: 5px;
+    }
+    .kbd {
+      display: inline-block;
+      padding: 2px 5px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12px;
+      background-color: #f8f9fa;
+      border: 1px solid #d5d9d9;
+      border-radius: 3px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>宜宾学院项目打分老师信息</h1>
+    
+    <div class="warning">
+      <div class="warning-title">⚠️ 重要提示：请确保开发者工具处于打开状态</div>
+      <p>要成功捕获评分数据，需要保持浏览器开发者工具的Network面板打开：</p>
+      <ol class="steps">
+        <li>按 <span class="kbd">F12</span> 或 <span class="kbd">Ctrl+Shift+I</span>（Mac: <span class="kbd">⌘+⌥+I</span>）打开开发者工具</li>
+        <li>切换到 <b>Network</b> 标签页</li>
+        <li>保持开发者工具打开状态，然后浏览项目评分页面并点击"查看"按钮</li>
+        <li>插件会自动捕获包含"stuProjectShow"的网络请求并提取评分数据</li>
+      </ol>
+    </div>
     
     <div class="card">
       <h2>捕获到的项目</h2>
